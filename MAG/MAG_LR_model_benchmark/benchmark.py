@@ -1,9 +1,6 @@
 #
 # common benchmark subroutines
 #
-#
-#
-#
 
 import requests
 import random
@@ -58,19 +55,6 @@ def measure_request_duration(url, collection, start_time, end_time, auxiliaries=
     xdata = data.as_xarray() 
     size = xdata["Timestamp"].shape[0]
     return request_duration, size
-
-
-MODELS = [
-    "CHAOS-Core",
-    "CHAOS-Static",
-    "CHAOS-MMA-Primary",
-    "CHAOS-MMA-Secondary",
-    "CHAOS-MMA",
-    "CHAOS",
-    "MIO_SHA_2C-Primary",
-    "MIO_SHA_2C-Secondary",
-    "MIO_SHA_2C",
-]
 
 
 def run_benchmark(url, description, collection, start_time, end_time, **options):
