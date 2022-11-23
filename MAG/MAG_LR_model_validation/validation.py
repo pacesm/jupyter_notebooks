@@ -2,9 +2,6 @@
 # common validation subroutines 
 #
 
-#
-# common benchmark subroutines
-#
 import numpy
 import requests
 import random
