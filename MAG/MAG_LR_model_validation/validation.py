@@ -1,5 +1,5 @@
 #
-# common validation subroutines 
+# common validation subroutines
 #
 
 import numpy
@@ -34,7 +34,7 @@ def get_collection_date_range(url, collection):
     )
 
 
-def get_data(url, collection, start_time, end_time, auxiliaries=None, models=None, filters=None):
+def get_data(url, collection, start_time, end_time, auxiliaries=None, models=None, filters=None, data_file=None):
     request = SwarmRequest(f"{url}/ows")
     request.set_collection(collection)
     request.set_products(
@@ -55,6 +55,8 @@ def get_data(url, collection, start_time, end_time, auxiliaries=None, models=Non
     request_stop = time.perf_counter_ns()
     request_duration = (request_stop - request_start) * 1e-9
     print(f"{url} {request_duration:g}s")
+    if data_file:
+        data.to_file(data_file, overwrite=True)
     return data.as_xarray()
 
 
@@ -70,9 +72,6 @@ def get_compared_model_values(tested_url, reference_url, collection, start_time,
     reference_data = get_data(url=reference_url, **options)
     tested_data = get_data(url=tested_url, **options)
 
-    #print(reference_data)
-    #print(tested_data)
-    
     for key in ["Timestamp", "Radius", "Latitude", "Longitude"]:
         if not numpy.array_equal(tested_data[key].values, reference_data[key].values):
             raise ValueError(f"{key} mismatch! ({collection}, {start_time.isoformat()}/{end_time.isoformat()})")
@@ -92,6 +91,8 @@ def get_compared_model_values(tested_url, reference_url, collection, start_time,
             for name in model_names
         },
         "info": {
+            "tested_url": tested_url,
+            "reference_url": reference_url,
             "collection": collection,
             "start": start_time.isoformat(),
             "end": end_time.isoformat(),
