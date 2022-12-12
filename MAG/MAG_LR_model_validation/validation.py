@@ -83,12 +83,24 @@ def get_compared_model_values(tested_url, reference_url, collection, start_time,
     return {
         "Timestamp": reference_data["Timestamp"].values,
         "tested": {
-            name: tested_data[f"B_NEC_{name}"].values
-            for name in model_names
+            **{
+                name: tested_data[f"B_NEC_{name}"].values
+                for name in model_names
+            },
+            **{
+                name: tested_data[name].values
+                for name in options.get("auxiliaries") or []
+            },
         },
         "reference": {
-            name: reference_data[f"B_NEC_{name}"].values
-            for name in model_names
+            **{
+                name: reference_data[f"B_NEC_{name}"].values
+                for name in model_names
+            },
+            **{
+                name: reference_data[name].values
+                for name in options.get("auxiliaries") or []
+            },
         },
         "info": {
             "tested_url": tested_url,
@@ -99,5 +111,9 @@ def get_compared_model_values(tested_url, reference_url, collection, start_time,
             "timestmap": datetime.datetime.utcnow().isoformat(),
             "model_names": model_names,
             "models": models,
+            "sources": {
+                "tested": tested_data.attrs["Sources"],
+                "reference": reference_data.attrs["Sources"],
+            }
         }
     }
